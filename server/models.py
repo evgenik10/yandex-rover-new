@@ -15,12 +15,15 @@ class User(db.Model):
 class Rover(db.Model):
     id = db.Column(db.String(64), primary_key=True)
     name = db.Column(db.String(128), nullable=False)
+    ip_address = db.Column(db.String(64), nullable=False, default="0.0.0.0")
     api_token = db.Column(db.String(128), nullable=False)
     is_deleted = db.Column(db.Boolean, nullable=False, default=False)
     mode_desired = db.Column(db.String(16), nullable=False, default="MANUAL")
     mode_reported = db.Column(db.String(16), nullable=False, default="MANUAL")
     pdd_state = db.Column(db.String(32), nullable=False, default="BOOT")
     last_seen = db.Column(db.DateTime, nullable=True)
+    last_lat = db.Column(db.Float, nullable=True)
+    last_lon = db.Column(db.Float, nullable=True)
 
 
 class Event(db.Model):

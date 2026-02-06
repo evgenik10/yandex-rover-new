@@ -16,12 +16,20 @@ class MotorController:
         self._ttl_s = 0.0
         self._left = 0.0
         self._right = 0.0
+        self._aux_lid_open = False
 
     def set_speed(self, left: float, right: float, ttl_s: float = 1.5) -> None:
         self._left = max(-self.max_speed, min(self.max_speed, left))
         self._right = max(-self.max_speed, min(self.max_speed, right))
         self._ttl_s = ttl_s
         self._last_cmd_ts = time.time()
+
+    def open_lid(self) -> None:
+        # Дополнительный мотор (актуатор крышки): команда на открытие.
+        self._aux_lid_open = True
+
+    def close_lid(self) -> None:
+        self._aux_lid_open = False
 
     def soft_stop(self, decel_step: float = 0.2) -> None:
         self._left *= (1 - decel_step)
@@ -41,4 +49,4 @@ class MotorController:
 
     @property
     def state(self) -> dict:
-        return {"left": self._left, "right": self._right}
+        return {"left": self._left, "right": self._right, "aux_lid_open": self._aux_lid_open}
