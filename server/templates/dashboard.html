@@ -1,24 +1,45 @@
 <!doctype html>
-<html>
+<html lang="ru">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Fleet Panel</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
 <body>
-  <aside id="sidebar"><h3>Rovers</h3><input id="search" placeholder="search"/><div id="rovers"></div></aside>
-  <main>
-    <h2>Dispatch Dashboard</h2>
-    <div id="status">mode_desired: - / mode_reported: -</div>
-    <section class="grid">
-      <div class="cam">Front</div><div class="cam">Rear</div><div class="cam">Left</div><div class="cam">Right</div>
-    </section>
-    <div class="controls">
-      <button onclick="sendMode('MANUAL')">MANUAL</button>
-      <button onclick="sendMode('AUTO')">AUTO</button>
-      <button onclick="sendStop()">STOP</button>
+  <aside id="sidebar">
+    <div class="sidebar-top">
+      <h3>Rovers</h3>
+      <a href="/logout" class="ghost-btn">Выход</a>
     </div>
+
+    <input id="search" placeholder="Поиск ровера"/>
+    <div id="rovers"></div>
+  </aside>
+
+  <main>
+    <header class="headbar">
+      <div>
+        <h2>Dispatch Dashboard</h2>
+        <p>Мониторинг, teleop и safety-состояния в одном экране.</p>
+      </div>
+      <div id="status" class="status-chip">mode_desired: - / mode_reported: -</div>
+    </header>
+
+    <section class="grid">
+      <article class="cam"><span>Front Camera</span></article>
+      <article class="cam"><span>Rear Camera</span></article>
+      <article class="cam"><span>Left Camera</span></article>
+      <article class="cam"><span>Right Camera</span></article>
+    </section>
+
+    <section class="controls">
+      <button class="btn" onclick="sendMode('MANUAL')">MANUAL</button>
+      <button class="btn" onclick="sendMode('AUTO')">AUTO</button>
+      <button class="btn danger" onclick="sendStop()">STOP</button>
+    </section>
   </main>
+
   <script>const USER_ROLE='{{ user_role }}';</script>
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
