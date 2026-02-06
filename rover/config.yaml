@@ -1,0 +1,44 @@
+rover:
+  id: rover-001
+  token: "CHANGE_ME"
+  simulation: true
+server:
+  base_url: "https://fleet.example.com"
+  request_timeout_s: 3
+motion:
+  max_speed_mps: 1.0
+  manual_command_ttl_s: 1.5
+  safe_speed_mps: 0.3
+  obstacle_stop_cm: 80
+  human_stop_cm: 200
+pins: # ПРОВЕРИТЬ ПО ДОКУМЕНТАЦИИ Repka Pi
+  motor_driver: tb6612
+  tb6612:
+    ain1: 17
+    ain2: 27
+    pwma: 18
+    bin1: 23
+    bin2: 24
+    pwmb: 13
+    stby: 22
+  hcsr04:
+    trig: 5
+    echo: 6 # ECHO 5V -> divider/level shifter required
+  uart:
+    tx: 14
+    rx: 15
+  i2c:
+    sda: 2
+    scl: 3
+safety:
+  link_loss_stop_s: 2
+  gps_degraded_hdop_threshold: 2.5
+  low_confidence_stop: true
+video:
+  sources:
+    front: /dev/video-front
+    rear: /dev/video-rear
+    left: /dev/video-left
+    right: /dev/video-right
+  infer_width: 640
+  infer_height: 360

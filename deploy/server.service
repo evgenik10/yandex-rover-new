@@ -1,0 +1,12 @@
+[Unit]
+Description=Rover Fleet Server (Gunicorn)
+After=network-online.target
+
+[Service]
+WorkingDirectory=/opt/fleet/server
+ExecStart=/opt/fleet/.venv/bin/gunicorn -w 2 -b 0.0.0.0:8000 'app:create_app()'
+Restart=always
+User=fleet
+
+[Install]
+WantedBy=multi-user.target
