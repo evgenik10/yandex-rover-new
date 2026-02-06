@@ -1,0 +1,5 @@
+body{margin:0;background:#0f172a;color:#e2e8f0;font-family:Inter,sans-serif;display:flex}
+#sidebar{width:280px;padding:12px;border-right:1px solid #334155;height:100vh;overflow:auto}
+main{flex:1;padding:16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cam{height:160px;background:#1e293b;border:1px solid #334155;border-radius:8px;display:flex;align-items:center;justify-content:center}
+button{margin-right:8px;padding:8px 12px;background:#2563eb;color:#fff;border:none;border-radius:6px}
