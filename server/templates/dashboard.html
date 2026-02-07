@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fleet Panel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+</head>
+<body>
+  <aside id="sidebar">
+    <div class="sidebar-top">
+      <h3>Rovers</h3>
+      <a href="/logout" class="ghost-btn">Выход</a>
+    </div>
+
+    <section class="add-rover-card glass-panel" id="add-form">
+      <h4>Добавить ровер по IP</h4>
+      <input id="new-id" placeholder="ID (например rover-002)" />
+      <input id="new-name" placeholder="Имя" />
+      <input id="new-ip" placeholder="IP (например 192.168.1.55)" />
+      <button class="btn glass-btn small" onclick="addRover()">Добавить</button>
+    </section>
+
+    <input id="search" placeholder="Поиск ровера" oninput="loadRovers()"/>
+    <div id="rovers"></div>
+  </aside>
+
+  <main>
+    <header class="headbar">
+      <div>
+        <h2>Dispatch Dashboard</h2>
+        <p>Мониторинг, teleop и safety-состояния в одном экране.</p>
+      </div>
+      <div class="head-controls">
+        <select id="rover-select" onchange="selectRover(this.value)"></select>
+        <details class="dropdown glass-panel">
+          <summary>Меню ровера ▾</summary>
+          <div class="dropdown-menu">
+            <button class="btn glass-btn small" onclick="openAddForm()">Добавить ровер</button>
+            <button class="btn glass-btn warning small" onclick="checkConnectivity()">Проверка связи</button>
+            <button class="btn glass-btn danger small" onclick="deleteRover()">Удалить ровер</button>
+          </div>
+        </details>
+        <div id="status" class="status-chip">mode_desired: - / mode_reported: -</div>
+        <div id="connectivity" class="connectivity">Связь: -</div>
+      </div>
+    </header>
+
+    <section class="grid camera-grid">
+      <article class="cam glass-panel"><span>Front Camera</span><small>FRONT</small></article>
+      <article class="cam glass-panel"><span>Rear Camera</span><small>REAR</small></article>
+      <article class="cam glass-panel"><span>Left Camera</span><small>LEFT</small></article>
+      <article class="cam glass-panel"><span>Right Camera</span><small>RIGHT</small></article>
+    </section>
+
+    <section class="teleop glass-panel">
+      <h3>Ручное управление</h3>
+      <div class="dpad">
+        <button class="btn glass-btn dpad-btn up" onclick="move('forward')">⬆<span>Вперёд</span></button>
+        <button class="btn glass-btn dpad-btn left" onclick="move('left')">⬅<span>Влево</span></button>
+        <button class="btn glass-btn dpad-btn stop" onclick="sendStop()">⏹<span>Стоп</span></button>
+        <button class="btn glass-btn dpad-btn right" onclick="move('right')">➡<span>Вправо</span></button>
+        <button class="btn glass-btn dpad-btn down" onclick="move('backward')">⬇<span>Назад</span></button>
+      </div>
+    </section>
+
+    <section class="controls">
+      <button class="btn glass-btn xl" onclick="sendMode('MANUAL')">MANUAL</button>
+      <button class="btn glass-btn xl" onclick="sendMode('AUTO')">AUTO</button>
+      <button class="btn glass-btn success xl" onclick="openLid()">Открыть крышку</button>
+      <button class="btn glass-btn warning xl" onclick="checkConnectivity()">Проверка связи</button>
+      <button class="btn glass-btn danger xl" onclick="deleteRover()">Удалить ровер</button>
+    </section>
+
+    <section class="map-wrap glass-panel">
+      <h3>Карта положения ровера</h3>
+      <div id="map"></div>
+    </section>
+
+
+    <section id="admin-profile" class="admin-panel glass-panel hidden">
+      <h3>Профиль админа</h3>
+      <p id="admin-meta">-</p>
+      <div class="admin-form">
+        <input id="new-user-username" placeholder="Новый логин" />
+        <input id="new-user-password" type="password" placeholder="Пароль (минимум 6 символов)" />
+        <select id="new-user-role">
+          <option value="moder">Модер</option>
+          <option value="admin">Админ</option>
+          <option value="viewer">Viewer</option>
+        </select>
+        <button class="btn glass-btn small" onclick="addAdminUser()">Добавить пользователя</button>
+      </div>
+      <div id="users-list" class="users-list"></div>
+    </section>
+  </main>
+
+  <script>const USER_ROLE='{{ user_role }}'; const USER_NAME='{{ username }}';</script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
