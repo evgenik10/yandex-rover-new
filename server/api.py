@@ -112,8 +112,14 @@ def add_rover():
 
     if not rover_id or not ip_address:
         abort(422)
-    if Rover.query.filter_by(id=rover_id).first():
-        return jsonify({"ok": False, "error": "rover_exists"}), 409
+    existing = Rover.query.filter_by(id=rover_id).first()
+    if existing:
+        return jsonify({
+            "ok": False,
+            "error": "rover_exists",
+            "message": f"Rover with id '{rover_id}' already exists",
+            "existing": {"id": existing.id, "name": existing.name, "ip_address": existing.ip_address, "is_deleted": existing.is_deleted},
+        }), 409
 
     rover = Rover(id=rover_id, name=name, ip_address=ip_address, api_token=token)
     db.session.add(rover)

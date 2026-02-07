@@ -168,6 +168,11 @@ async function addRover(){
     body:JSON.stringify({id, name, ip_address, api_token:'CHANGE_ME'})
   });
   if(!res.ok){
+    if(res.status === 409){
+      const data = await res.json();
+      const ex = data.existing || {};
+      return alert(`Ровер уже существует: ${ex.id || id} (${ex.ip_address || '-'})\nИспользуйте другой ID или удалите/переименуйте текущий.`);
+    }
     return alert('Ошибка добавления ровера');
   }
   document.getElementById('new-id').value = '';
