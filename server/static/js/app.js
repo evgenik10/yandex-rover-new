@@ -160,12 +160,13 @@ async function addRover(){
   const id = document.getElementById('new-id').value.trim();
   const name = document.getElementById('new-name').value.trim() || id;
   const ip_address = document.getElementById('new-ip').value.trim();
+  const api_token = (document.getElementById('new-token').value || '').trim() || 'CHANGE_ME';
   if(!id || !ip_address) return alert('Нужны ID и IP');
 
   const res = await fetch('/api/admin/rovers', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({id, name, ip_address, api_token:'CHANGE_ME'})
+    body:JSON.stringify({id, name, ip_address, api_token})
   });
   if(!res.ok){
     if(res.status === 409){
@@ -178,6 +179,7 @@ async function addRover(){
   document.getElementById('new-id').value = '';
   document.getElementById('new-name').value = '';
   document.getElementById('new-ip').value = '';
+  document.getElementById('new-token').value = '';
   await loadRovers();
 }
 

@@ -51,3 +51,10 @@ Pin mapping в проекте указан как гипотеза совмес�
 - rate-limit + replay protection по `seq_id`
 - подтверждение команд через ACK + timeout retries
 - переход на WebRTC/RTSP для видео
+
+
+## Если ровер не подключается
+- Убедитесь, что `rover.id` и `rover.token` совпадают с записью в панели.
+- В форме добавления ровера заполните `API token ровера` (иначе будет `CHANGE_ME`).
+- Проверьте `server.base_url` в `rover/config.yaml` или переменные `ROVER_SERVER_URL/ROVER_ID/ROVER_TOKEN`.
+- В логах ровера ищите `link_state=ONLINE` или `link_state=OFFLINE reason=...`.

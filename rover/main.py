@@ -2,6 +2,7 @@ import enum
 import logging
 import os
 import time
+from pathlib import Path
 
 from api_client import RoverAPIClient
 from gps import GPSReader
@@ -48,10 +49,30 @@ def setup_logging() -> None:
     )
 
 
+def read_client_settings_from_yaml() -> tuple[str, str, str]:
+    cfg_path = Path(__file__).with_name("config.yaml")
+    if not cfg_path.exists():
+        return "", "", ""
+
+    try:
+        import yaml  # type: ignore
+
+        data = yaml.safe_load(cfg_path.read_text()) or {}
+        return (
+            str((data.get("server") or {}).get("base_url") or "").strip(),
+            str((data.get("rover") or {}).get("id") or "").strip(),
+            str((data.get("rover") or {}).get("token") or "").strip(),
+        )
+    except Exception:
+        # YAML parser may be unavailable; env vars can still be used.
+        return "", "", ""
+
+
 def maybe_build_client() -> RoverAPIClient | None:
-    server_url = os.getenv("ROVER_SERVER_URL", "").strip()
-    rover_id = os.getenv("ROVER_ID", "").strip()
-    token = os.getenv("ROVER_TOKEN", "").strip()
+    cfg_server_url, cfg_rover_id, cfg_token = read_client_settings_from_yaml()
+    server_url = os.getenv("ROVER_SERVER_URL", cfg_server_url).strip()
+    rover_id = os.getenv("ROVER_ID", cfg_rover_id).strip()
+    token = os.getenv("ROVER_TOKEN", cfg_token).strip()
     if not server_url or not rover_id or not token:
         return None
     return RoverAPIClient(server_url, rover_id, token)
@@ -66,6 +87,12 @@ if __name__ == "__main__":
     last_hb_ts = 0.0
 
     rover.logger.info("rover_start mode=%s state=%s", rover.mode_reported, rover.pdd_state)
+    if client:
+        rover.logger.info("client_configured rover_id=%s server=%s", client.rover_id, client.base_url)
+    else:
+        rover.logger.warning(
+            "client_not_configured set ROVER_SERVER_URL/ROVER_ID/ROVER_TOKEN or fill rover/config.yaml"
+        )
 
     while True:
         rover.tick()
