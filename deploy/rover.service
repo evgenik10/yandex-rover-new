@@ -1,0 +1,13 @@
+[Unit]
+Description=Rover Runtime
+After=network-online.target
+
+[Service]
+WorkingDirectory=/opt/rover
+ExecStart=/opt/rover/.venv/bin/python main.py
+Restart=always
+RestartSec=2
+User=rover
+
+[Install]
+WantedBy=multi-user.target
