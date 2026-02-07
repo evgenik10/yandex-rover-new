@@ -41,7 +41,7 @@ def create_app():
     def index():
         if "uid" not in session:
             return redirect(url_for("login"))
-        return render_template("dashboard.html", user_role=session.get("role", "viewer"))
+        return render_template("dashboard.html", user_role=session.get("role", "viewer"), username=session.get("username", "unknown"))
 
     @app.route("/login", methods=["GET", "POST"])
     def login():

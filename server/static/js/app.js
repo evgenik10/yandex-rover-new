@@ -12,6 +12,52 @@ function initMap(){
   marker = L.marker([60.1699, 24.9384]).addTo(map).bindPopup('Rover position');
 }
 
+function initAdminProfile(){
+  const panel = document.getElementById('admin-profile');
+  if(!panel) return;
+  if(USER_ROLE === 'admin'){
+    panel.classList.remove('hidden');
+    document.getElementById('admin-meta').textContent = `Текущий профиль: ${USER_NAME} (admin)`;
+    loadAdminUsers();
+  }
+}
+
+async function loadAdminUsers(){
+  if(USER_ROLE !== 'admin') return;
+  const list = document.getElementById('users-list');
+  const res = await fetch('/api/admin/users');
+  if(!res.ok){
+    list.innerHTML = '<div class="user-card">Не удалось загрузить пользователей</div>';
+    return;
+  }
+  const users = await res.json();
+  list.innerHTML = users.map(u => `<div class="user-card"><strong>${u.username}</strong><br><small>role: ${u.role}</small></div>`).join('');
+}
+
+async function addAdminUser(){
+  if(USER_ROLE !== 'admin') return alert('Только admin');
+  const username = document.getElementById('new-user-username').value.trim();
+  const password = document.getElementById('new-user-password').value;
+  const role = document.getElementById('new-user-role').value;
+  if(!username || password.length < 6) return alert('Проверь логин/пароль');
+
+  const res = await fetch('/api/admin/users', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({username, password, role})
+  });
+
+  if(!res.ok){
+    if(res.status === 409) return alert('Пользователь уже существует');
+    return alert('Ошибка добавления пользователя');
+  }
+
+  document.getElementById('new-user-username').value = '';
+  document.getElementById('new-user-password').value = '';
+  document.getElementById('new-user-role').value = 'moder';
+  await loadAdminUsers();
+}
+
 function openAddForm(){
   document.getElementById('add-form')?.scrollIntoView({behavior:'smooth', block:'start'});
 }
@@ -149,5 +195,6 @@ async function checkConnectivity(){
 }
 
 initMap();
+initAdminProfile();
 setInterval(loadRovers,2000);
 loadRovers();

@@ -2,8 +2,9 @@ from datetime import datetime, timedelta
 from functools import wraps
 
 from flask import Blueprint, abort, jsonify, request, session
+from werkzeug.security import generate_password_hash
 
-from models import Event, Rover, db
+from models import Event, Rover, User, db
 
 
 api = Blueprint("api", __name__, url_prefix="/api")
@@ -45,7 +46,7 @@ def _is_online(rover: Rover) -> bool:
 
 
 @api.get("/ui/rovers")
-@require_ui_roles("admin", "operator", "viewer")
+@require_ui_roles("admin", "operator", "moder", "viewer")
 def ui_rovers():
     rovers = Rover.query.filter_by(is_deleted=False).all()
     return jsonify([
@@ -62,6 +63,42 @@ def ui_rovers():
         }
         for r in rovers
     ])
+
+
+@api.get("/admin/users")
+@require_ui_roles("admin")
+def list_users():
+    users = User.query.order_by(User.username.asc()).all()
+    return jsonify([
+        {
+            "id": u.id,
+            "username": u.username,
+            "role": u.role,
+        }
+        for u in users
+    ])
+
+
+@api.post("/admin/users")
+@require_ui_roles("admin")
+def add_user():
+    body = request.get_json(force=True)
+    username = (body.get("username") or "").strip()
+    password = body.get("password") or ""
+    role = (body.get("role") or "viewer").strip().lower()
+
+    if not username or len(password) < 6:
+        abort(422)
+    if role not in {"admin", "moder", "operator", "viewer"}:
+        abort(422)
+    if User.query.filter_by(username=username).first():
+        return jsonify({"ok": False, "error": "user_exists"}), 409
+
+    user = User(username=username, password_hash=generate_password_hash(password), role=role)
+    db.session.add(user)
+    db.session.add(Event(rover_id="rover-001", actor=session.get("username", "admin"), kind="user_add", payload=str({"username": username, "role": role})))
+    db.session.commit()
+    return jsonify({"ok": True, "user": {"username": username, "role": role}})
 
 
 @api.post("/admin/rovers")
@@ -86,7 +123,7 @@ def add_rover():
 
 
 @api.post("/rovers/<id>/command")
-@require_ui_roles("admin", "operator")
+@require_ui_roles("admin", "operator", "moder")
 def command(id):
     rover = Rover.query.filter_by(id=id, is_deleted=False).first_or_404()
     body = request.get_json(force=True)
@@ -99,7 +136,7 @@ def command(id):
 
 
 @api.post("/rovers/<id>/connectivity-check")
-@require_ui_roles("admin", "operator", "viewer")
+@require_ui_roles("admin", "operator", "moder", "viewer")
 def connectivity_check(id):
     rover = Rover.query.filter_by(id=id, is_deleted=False).first_or_404()
     return jsonify({"ok": True, "online": _is_online(rover), "last_seen": rover.last_seen.isoformat() if rover.last_seen else None})

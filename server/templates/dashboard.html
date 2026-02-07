@@ -77,9 +77,26 @@
       <h3>Карта положения ровера</h3>
       <div id="map"></div>
     </section>
+
+
+    <section id="admin-profile" class="admin-panel glass-panel hidden">
+      <h3>Профиль админа</h3>
+      <p id="admin-meta">-</p>
+      <div class="admin-form">
+        <input id="new-user-username" placeholder="Новый логин" />
+        <input id="new-user-password" type="password" placeholder="Пароль (минимум 6 символов)" />
+        <select id="new-user-role">
+          <option value="moder">Модер</option>
+          <option value="admin">Админ</option>
+          <option value="viewer">Viewer</option>
+        </select>
+        <button class="btn glass-btn small" onclick="addAdminUser()">Добавить пользователя</button>
+      </div>
+      <div id="users-list" class="users-list"></div>
+    </section>
   </main>
 
-  <script>const USER_ROLE='{{ user_role }}';</script>
+  <script>const USER_ROLE='{{ user_role }}'; const USER_NAME='{{ username }}';</script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>

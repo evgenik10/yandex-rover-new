@@ -168,3 +168,18 @@ main{flex:1;padding:18px 22px}
   .head-controls{gap:8px}
   .connectivity{font-size:14px}
 }
+
+
+.hidden{display:none !important}
+.admin-panel{margin-top:16px;padding:12px;border-radius:16px}
+.admin-panel h3{margin:0 0 6px 0}
+#admin-meta{margin:0 0 10px 0;color:var(--muted)}
+.admin-form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.admin-form input,.admin-form select{width:100%;background:rgba(12,24,46,.72);border:1px solid rgba(148,163,184,.35);color:var(--text);padding:10px 12px;border-radius:12px}
+.users-list{margin-top:10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.user-card{padding:10px;border:1px solid rgba(148,163,184,.25);border-radius:12px;background:rgba(9,19,36,.6)}
+
+@media (max-width: 900px){
+  .admin-form{grid-template-columns:1fr}
+  .users-list{grid-template-columns:1fr}
+}
